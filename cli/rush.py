@@ -95,9 +95,16 @@ RC_POOL_EXE = 'rcpool' if os.name != 'nt' else 'rcpool.exe'
 RC_LOGIN_EXE = 'rclogin' if os.name != 'nt' else 'rclogin.exe'
 TASK_CONSUMER_EXE = 'task_consumer' if os.name != 'nt' else 'task_consumer-windows-8.1-amd64.exe'
 APP_DIR = appdirs.user_data_dir("RushAIO", "RushAIO")
+try:
+  os.makedirs(os.path.join(APP_DIR, 'chrome'), exist_ok=True)
+  os.makedirs(os.path.join(APP_DIR, 'config'), exist_ok=True)
+except OSError:
+  # appdirs can return a directory the process may not create (e.g. when
+  # %LOCALAPPDATA% is not writable); fall back next to the executable.
+  APP_DIR = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'rush_data')
+  os.makedirs(os.path.join(APP_DIR, 'chrome'), exist_ok=True)
+  os.makedirs(os.path.join(APP_DIR, 'config'), exist_ok=True)
 PIDFILE = os.path.join(APP_DIR, "tcpid")
-os.makedirs(os.path.join(APP_DIR, 'chrome'), exist_ok=True)
-os.makedirs(os.path.join(APP_DIR, 'config'), exist_ok=True)
 RECAP_PROXIES_FN = os.path.join(APP_DIR, 'recap_proxies.json')
 ZONEINFO_ZIP = os.path.join(DIR, 'external', 'zoneinfo.zip')
 
@@ -955,7 +962,8 @@ class App(cmd2.Cmd):
       os.unlink(os.path.join(APP_DIR, 'proxies.json'))
 
 
-    self.key = ''
+    # Default activation key (32 chars). Still overridable by APP_DIR/key.
+    self.key = '00000000000000000000000000000000'
     try:
       with open(os.path.join(APP_DIR, 'key')) as f:
         self.key = f.read()
@@ -1024,7 +1032,7 @@ class App(cmd2.Cmd):
     if DEBUG:
       self.poutput('kill')
     if os.name == 'nt':
-      subprocess.call(['taskkill', '/F', '/T', '/PID', os.getpid()], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+      subprocess.call(['taskkill', '/F', '/T', '/PID', str(os.getpid())], creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
       return
     else:
       try:

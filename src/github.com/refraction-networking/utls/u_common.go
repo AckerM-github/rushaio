@@ -144,6 +144,9 @@ var (
 	HelloFirefox_56   = ClientHelloID{helloFirefox, "56", nil}
 	HelloFirefox_63   = ClientHelloID{helloFirefox, "63", nil}
 	HelloFirefox_65   = ClientHelloID{helloFirefox, "65", nil}
+	// HelloFirefox_82 is referenced by RushAIO but is not present in this
+	// vendored uTLS snapshot (June 2020); alias it to 65 so callers compile.
+	HelloFirefox_82 = HelloFirefox_65
 
 	HelloChrome_Auto = HelloChrome_83
 	HelloChrome_58   = ClientHelloID{helloChrome, "58", nil}

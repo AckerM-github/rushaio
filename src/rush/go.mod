@@ -63,5 +63,3 @@ require (
 replace golang.org/x/net => ../golang.org/x/net
 
 replace github.com/refraction-networking/utls => ../github.com/refraction-networking/utls
-
-replace github.com/elazarl/goproxy => ../github.com/elazarl/goproxy
